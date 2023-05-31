@@ -1,4 +1,3 @@
-
 namespace Sdk.Common
 {
 
@@ -6,6 +5,9 @@ namespace Sdk.Common
 
     public class Globals
     {
+        public static string ResourcesRootDirectory { get; set; }
+
+        public static string SerializationMappingFilePath { get; set; }
 
         public static StringEncryptorDelegate StringEncryptorDelegate { get; set; }
 

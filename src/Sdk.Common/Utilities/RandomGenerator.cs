@@ -2,8 +2,6 @@
 namespace Sdk.Common.Utilities
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Text;
 
     public class RandomGenerator
@@ -38,10 +36,10 @@ namespace Sdk.Common.Utilities
         }
 
         #endregion
-        
+
         public string RandomString(int size)
         {
-            
+
 
             StringBuilder builder = new StringBuilder();
             char ch = '\0';

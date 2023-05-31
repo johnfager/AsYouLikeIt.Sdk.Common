@@ -4,9 +4,6 @@ namespace Sdk.Common.Utilities
 {
 
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using System.Text.RegularExpressions;
 
     public class RegExPatterns
@@ -27,6 +24,8 @@ namespace Sdk.Common.Utilities
 
             return true;
         }
+
+        public const string HasRegex = @"^[0-9A-Fa-f\r\n]+$";
 
         public const string WordAndSpace = "[^\\w\\s]";
 
@@ -53,7 +52,7 @@ namespace Sdk.Common.Utilities
         public const string NumericValuesOnly = "[0-9]+";
 
         public const string Domain = "\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*";
-        
+
         public const string DomainClassicStrong = "^([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}$";
 
         public const string Serialization = "(%%[A-Za-z0-9\\-_.\\[\\])^%]*%%)";

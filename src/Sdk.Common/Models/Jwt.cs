@@ -1,7 +1,6 @@
 
 namespace Sdk.Common.Models
 {
-    using System;
     using Newtonsoft.Json;
 
     public class Jwt
@@ -13,6 +12,6 @@ namespace Sdk.Common.Models
         public string TokenType { get; set; }
 
         [JsonProperty(Order = 3, PropertyName = "expires_in")]
-        public long ExpiresIn { get; set; }              
+        public long ExpiresIn { get; set; }
     }
 }

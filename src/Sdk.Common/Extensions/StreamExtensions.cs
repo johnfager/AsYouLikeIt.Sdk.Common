@@ -1,4 +1,3 @@
-
 namespace Sdk.Common.Extensions
 {
     using System.IO;

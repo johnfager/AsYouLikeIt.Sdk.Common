@@ -1,24 +1,20 @@
 
 namespace Sdk.Common.Serialization
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Configuration;
-    using System.Data;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.Serialization;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using System.Xml;
-    using System.Xml.Serialization;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
+    using System;
+    using System.IO;
+    using System.Runtime.Serialization.Formatters.Binary;
+    using System.Runtime.Serialization;
+    using System.Xml;
 
     public class Serializer
     {
 
         private static JsonSerializerSettings _serializerSettings;
+
+        public static bool ErrorOnMissingMember { get; set; } = false;
 
         public static JsonSerializerSettings SerializerSettings
         {
@@ -46,7 +42,7 @@ namespace Sdk.Common.Serialization
             settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             settings.NullValueHandling = NullValueHandling.Ignore;
             // Look at exact serialization settings
-            if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["jsonMissingMemberError"]) && ConfigurationManager.AppSettings["jsonMissingMemberError"].ToLower() == "true")
+            if (!ErrorOnMissingMember)
             {
                 settings.MissingMemberHandling = MissingMemberHandling.Error;
             }
@@ -80,7 +76,7 @@ namespace Sdk.Common.Serialization
         {
             return JsonConvert.SerializeObject(obj, jsonSerializerSettings);
         }
-        
+
         public static string SerializeToJson(object obj, bool indented, JsonSerializerSettings jsonSerializerSettings)
         {
             if (indented)
@@ -90,7 +86,7 @@ namespace Sdk.Common.Serialization
             else
             {
                 return JsonConvert.SerializeObject(obj, Newtonsoft.Json.Formatting.None, jsonSerializerSettings);
-            }   
+            }
         }
 
         public static string SerializeJsonToXml(string json, string rootNode)
@@ -137,9 +133,6 @@ namespace Sdk.Common.Serialization
             return (T)DeserializeFromJson(jsonText, type, settings);
             // return DeserializeFromJson<T>(jsonText, false);
         }
-
-
-        //---------------------
 
         // Convert an object to a byte array
         public static byte[] SerializeToByteArray(Object obj)

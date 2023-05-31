@@ -1,14 +1,21 @@
 
 namespace Sdk.Common.Models
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using System;
 
-    public partial class CreatedModifiedRecord
+    public interface ICreatedModifiedRecord
+    {
+        DateTime? CreatedOnUtc { get; set; }
+
+        string CreatedBy { get; set; }
+
+        DateTime? ModifiedOnUtc { get; set; }
+
+        string ModifiedBy { get; set; }
+    }
+
+    public partial class CreatedModifiedRecord : ICreatedModifiedRecord
     {
 
         [JsonProperty(Order = 1, NullValueHandling = NullValueHandling.Ignore)]
@@ -22,6 +29,5 @@ namespace Sdk.Common.Models
 
         [JsonProperty(Order = 4, NullValueHandling = NullValueHandling.Ignore)]
         public string ModifiedBy { get; set; }
-
     }
 }

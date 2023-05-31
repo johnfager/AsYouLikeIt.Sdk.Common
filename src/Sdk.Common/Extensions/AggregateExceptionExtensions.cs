@@ -1,4 +1,3 @@
-
 namespace Sdk.Common.Extensions
 {
 
@@ -12,8 +11,7 @@ namespace Sdk.Common.Extensions
 
         public static Exception ExtractSingleIfAggregate(this Exception exception)
         {
-            var aggEx = exception as AggregateException;
-            if (aggEx == null)
+            if(!(exception is AggregateException aggEx))
             {
                 return exception;
             }
@@ -25,9 +23,8 @@ namespace Sdk.Common.Extensions
                 Exception nextEx = aggEx.InnerExceptions.First();
                 while (true)
                 {
-                    if (nextEx is AggregateException)
+                    if (nextEx is AggregateException thisAgg)
                     {
-                        var thisAgg = (AggregateException)nextEx;
                         if (thisAgg.InnerExceptions != null && thisAgg.InnerExceptions.Any())
                         {
                             nextEx = thisAgg.InnerExceptions.First();
@@ -59,13 +56,13 @@ namespace Sdk.Common.Extensions
 
         private static void ExtractRecursive(this AggregateException ex, List<Exception> list)
         {
-            if(ex.InnerExceptions != null)
+            if (ex.InnerExceptions != null)
             {
-                foreach(var innerEx in ex.InnerExceptions)
+                foreach (var innerEx in ex.InnerExceptions)
                 {
-                    if(innerEx is AggregateException)
+                    if (innerEx is AggregateException aggregateException)
                     {
-                        ExtractRecursive((AggregateException)innerEx, list);
+                        ExtractRecursive(aggregateException, list);
                     }
                     else
                     {

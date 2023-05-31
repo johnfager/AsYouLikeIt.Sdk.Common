@@ -1,8 +1,7 @@
-
 namespace Sdk.Common.Utilities
 {
-    using System;
     using Sdk.Common.Extensions;
+    using System;
     using System.Globalization;
 
     public partial class Parser
@@ -84,8 +83,8 @@ namespace Sdk.Common.Utilities
                 {
                     if (!RegExPatterns.IsValidRegex(preParseRegex))
                     {
-                        var configurationError = string.Format("RegEx pattern '{0}' is not a valid RegEx pattern.", preParseRegex);
-                        throw new System.Configuration.ConfigurationErrorsException(configurationError);
+                        var configurationError = $"RegEx pattern '{preParseRegex}' is not a valid RegEx pattern.";
+                        throw new FormatException(configurationError);
                     }
                     // strip matching regex patterns
                     asString = asString.RegexReplace(preParseRegex);

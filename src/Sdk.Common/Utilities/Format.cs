@@ -1,14 +1,13 @@
 
 namespace Sdk.Common.Utilities
 {
+    using Extensions;
     using System;
     using System.Collections.Generic;
+    using System.Collections.Specialized;
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
-    using System.Threading.Tasks;
-    using Extensions;
-    using System.Collections.Specialized;
 
     public static class Format
     {
@@ -399,7 +398,7 @@ namespace Sdk.Common.Utilities
         {
             return ParseSeparatedValuesRow(input, separator, true);
         }
-        
+
         public static string[] ParseSeparatedValuesRow(string input, string separator, bool trim)
         {
             if (string.IsNullOrEmpty(separator))
@@ -450,6 +449,29 @@ namespace Sdk.Common.Utilities
             stc.CopyTo(s, 0);
             return s;
 
+        }
+
+        public static bool TryParseBase64Encoded(string input, out byte[] value)
+        {
+            try
+            {
+                // If no exception is caught, then it is possibly a base64 encoded string
+                value = Convert.FromBase64String(input);
+                return (input.Replace(" ", "").Length % 4 == 0);
+            }
+            catch
+            {
+                // If exception is caught, then it is not a base64 encoded string
+                value = null;
+                return false;
+            }
+        }
+
+        private static readonly Regex r = new Regex(RegExPatterns.HasRegex);
+
+        public static bool VerifyHex(string hex)
+        {
+            return r.Match(hex).Success;
         }
 
     }

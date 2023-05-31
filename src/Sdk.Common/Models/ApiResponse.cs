@@ -1,12 +1,10 @@
 ﻿
 namespace Sdk.Common.Models
 {
-    using Sdk.Common.Utilities;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
-    using System;
-    using System.Collections.Generic;
     using Sdk.Common.Serialization;
+    using System.Collections.Generic;
 
     /// <summary>
     /// An API response message with information about the operation performed.
@@ -93,7 +91,7 @@ namespace Sdk.Common.Models
     /// An API response message with information about the operation performed that includes a property for associated data.
     /// This should be used as the response wrapper for all API calls.
     /// </summary>
-    public class ApiResponse<T> : ApiResponse 
+    public class ApiResponse<T> : ApiResponse
     {
         /// <summary>
         /// The data associated with the ApiResponse

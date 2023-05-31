@@ -4,15 +4,12 @@ namespace Sdk.Common.Serialization
     using Extensions;
     using System;
     using System.Collections.Generic;
-    using System.Configuration;
     using System.IO;
-    using System.Linq;
     using System.Reflection;
     using System.Runtime.Serialization;
-    using System.Text;
     using System.Text.RegularExpressions;
-    using System.Threading.Tasks;
     using Utilities;
+
     public class TolerantSerializationBinder : System.Runtime.Serialization.SerializationBinder
     {
         private static object _lock;
@@ -55,7 +52,7 @@ namespace Sdk.Common.Serialization
 
         private static string MapPath(string virtualPath)
         {
-            var rootDir = ConfigurationManager.AppSettings["resourcesRoot"];
+            var rootDir = Globals.ResourcesRootDirectory;
             if (string.IsNullOrEmpty(rootDir))
             {
                 rootDir = AssemblyDirectory;
@@ -70,7 +67,7 @@ namespace Sdk.Common.Serialization
             }
             if (!Directory.Exists(rootDir))
             {
-                throw new ConfigurationErrorsException("appSettings must contain a valid directory path for the 'resourcesRoot' value. Root directory path is set as:\r\n" + rootDir);
+                throw new InvalidOperationException("appSettings must contain a valid directory path for the 'resourcesRoot' value. Root directory path is set as:\r\n" + rootDir);
             }
             if (string.IsNullOrWhiteSpace(virtualPath))
             {
@@ -94,7 +91,7 @@ namespace Sdk.Common.Serialization
             }
             lock (_lock)
             {
-                var filePath = ConfigurationManager.AppSettings["serializationMappingFilePath"];
+                var filePath = Globals.SerializationMappingFilePath;
                 if (!string.IsNullOrEmpty(filePath))
                 {
                     if (filePath.StartsWith("~/"))
@@ -137,19 +134,6 @@ namespace Sdk.Common.Serialization
 
         public override Type BindToType(string assemblyName, string typeName)
         {
-
-            if (assemblyName.StartsWith("JFM.Common") && typeName.Contains("Encryption"))
-            {
-                assemblyName = "CompliaShield.Security.Cryptography";
-                typeName = typeName.Replace("JFM.Common.Utilities.Encryption", "CompliaShield.Security.Cryptography.Encryption");
-            }
-
-            // Freaking typos!
-            if (typeName.Contains("AsymentricallyEncryptedObject"))
-            {
-                typeName = typeName.Replace("AsymentricallyEncryptedObject", "AsymmetricallyEncryptedObject");
-            }
-
             if (SerializationMappings != null)
             {
                 foreach (var mapping in SerializationMappings)
@@ -185,42 +169,9 @@ namespace Sdk.Common.Serialization
             }
 
             // Get the type using the typeName and assemblyName
-            Type typeToDeserialize = Type.GetType(String.Format("{0}, {1}",
-                typeName, assemblyName));
+            Type typeToDeserialize = Type.GetType($"{typeName}, {assemblyName}");
 
-            if (typeToDeserialize == null)
-            {
-                if (assemblyName.StartsWith("JFM.Email.Core"))
-                {
-                    assemblyName = "JFM.VdpWeb.Email.Core";
-                }
-                if (typeName.StartsWith("JFM.Email.Core"))
-                {
-                    typeName = typeName.Replace("JFM.Email.Core", "JFM.VdpWeb.Email.Core");
-                }
-
-                // jfm.security
-                if (assemblyName.StartsWith("JFM.Security.Crytography"))
-                {
-                    assemblyName = "Sdk.Cryptography";
-                }
-                if (typeName.StartsWith("JFM.Security.Crytography.Encryption"))
-                {
-                    typeName = typeName.Replace("JFM.Security.Crytography.Encryption", "Sdk.Cryptography.Encryption");
-                }
-
-                typeToDeserialize = Type.GetType(String.Format("{0}, {1}", typeName, assemblyName));
-
-            }
-
-            if (typeToDeserialize == null)
-            {
-                throw new SerializationException(string.Format("TolerantSerialiazationBinder: Unable to find assembly '{0}' with type '{1}'.", assemblyName, typeName));
-            }
-
-            return typeToDeserialize;
+            return typeToDeserialize ?? throw new SerializationException($"TolerantSerialiazationBinder: Unable to find assembly '{assemblyName}' with type '{typeName}'.");
         }
-
-
     }
 }

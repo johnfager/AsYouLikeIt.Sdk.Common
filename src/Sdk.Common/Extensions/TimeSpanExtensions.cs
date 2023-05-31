@@ -1,5 +1,7 @@
-﻿namespace System
+﻿namespace Sdk.Common.Extensions
 {
+    using System;
+
     public static class TimeSpanExtensions
     {
         /// <summary>
