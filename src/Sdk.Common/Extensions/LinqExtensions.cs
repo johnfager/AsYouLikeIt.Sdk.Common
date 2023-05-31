@@ -1,4 +1,4 @@
-﻿namespace Sdk.Common.Extensions
+﻿namespace AsYouLikeIt.Sdk.Common.Extensions
 {
     using System.Collections.Generic;
     using System.Linq;

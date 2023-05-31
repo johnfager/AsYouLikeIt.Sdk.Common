@@ -1,5 +1,5 @@
 ﻿
-namespace Sdk.Common.Hashing
+namespace AsYouLikeIt.Sdk.Common.Hashing
 {
     using System;
     using System.Security.Cryptography;

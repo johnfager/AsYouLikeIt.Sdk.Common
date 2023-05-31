@@ -1,5 +1,5 @@
 
-namespace Sdk.Common.Serialization
+namespace AsYouLikeIt.Sdk.Common.Serialization
 {
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;

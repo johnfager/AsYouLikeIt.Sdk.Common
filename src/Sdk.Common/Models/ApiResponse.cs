@@ -1,9 +1,9 @@
 ﻿
-namespace Sdk.Common.Models
+namespace AsYouLikeIt.Sdk.Common.Models
 {
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
-    using Sdk.Common.Serialization;
+    using AsYouLikeIt.Sdk.Common.Serialization;
     using System.Collections.Generic;
 
     /// <summary>

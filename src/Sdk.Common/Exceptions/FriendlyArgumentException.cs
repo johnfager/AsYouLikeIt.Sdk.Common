@@ -1,7 +1,7 @@
 ﻿
-namespace Sdk.Common.Exceptions
+namespace AsYouLikeIt.Sdk.Common.Exceptions
 {
-    using Sdk.Common.Models;
+    using AsYouLikeIt.Sdk.Common.Models;
     using System;
 
     [Serializable]

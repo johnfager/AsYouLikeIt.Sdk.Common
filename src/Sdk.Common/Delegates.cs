@@ -1,5 +1,5 @@
 
-namespace Sdk.Common.Delegates
+namespace AsYouLikeIt.Sdk.Common.Delegates
 {
 
     /// <summary>

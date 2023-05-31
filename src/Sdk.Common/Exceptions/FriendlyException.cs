@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sdk.Common.Exceptions
+namespace AsYouLikeIt.Sdk.Common.Exceptions
 {
     [Serializable]
     public class FriendlyException : Exception

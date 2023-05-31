@@ -1,4 +1,4 @@
-namespace Sdk.Common
+namespace AsYouLikeIt.Sdk.Common
 {
 
     using Delegates;

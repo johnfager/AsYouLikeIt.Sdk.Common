@@ -1,6 +1,6 @@
-﻿namespace Sdk.Common.Extensions
+﻿namespace AsYouLikeIt.Sdk.Common.Extensions
 {
-    using Sdk.Common.Models;
+    using AsYouLikeIt.Sdk.Common.Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;

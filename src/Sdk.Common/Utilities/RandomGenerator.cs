@@ -1,5 +1,5 @@
 ﻿
-namespace Sdk.Common.Utilities
+namespace AsYouLikeIt.Sdk.Common.Utilities
 {
     using System;
     using System.Text;

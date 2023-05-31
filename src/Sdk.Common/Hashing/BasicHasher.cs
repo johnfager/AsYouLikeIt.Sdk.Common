@@ -1,8 +1,8 @@
-﻿namespace Sdk.Common.Hashing
+﻿namespace AsYouLikeIt.Sdk.Common.Hashing
 {
-    using Sdk.Common.Extensions;
-    using Sdk.Common.Serialization;
-    using Sdk.Common.Utilities;
+    using AsYouLikeIt.Sdk.Common.Extensions;
+    using AsYouLikeIt.Sdk.Common.Serialization;
+    using AsYouLikeIt.Sdk.Common.Utilities;
     using System;
     using System.Diagnostics;
     using System.Linq;

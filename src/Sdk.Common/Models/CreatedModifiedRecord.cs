@@ -1,5 +1,5 @@
 
-namespace Sdk.Common.Models
+namespace AsYouLikeIt.Sdk.Common.Models
 {
     using Newtonsoft.Json;
     using System;

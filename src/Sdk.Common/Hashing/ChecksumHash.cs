@@ -1,7 +1,7 @@
 ﻿
-namespace Sdk.Common.Hashing
+namespace AsYouLikeIt.Sdk.Common.Hashing
 {
-    using Sdk.Common.Serialization;
+    using AsYouLikeIt.Sdk.Common.Serialization;
     using System;
     using System.Runtime.Serialization;
     using System.Security.Cryptography;

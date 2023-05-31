@@ -1,7 +1,8 @@
-﻿using System;
-
-namespace Sdk.Common.Exceptions
+﻿
+namespace AsYouLikeIt.Sdk.Common.Exceptions
 {
+    using System;
+
     /// <summary>
     /// Thrown when a 404 response is desired. Generic information passed in the result to the user while the underlying exception can have an internal message.
     /// </summary>

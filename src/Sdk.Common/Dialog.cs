@@ -1,5 +1,5 @@
 ﻿
-namespace Sdk.Common
+namespace AsYouLikeIt.Sdk.Common
 {
 
     /// <summary>

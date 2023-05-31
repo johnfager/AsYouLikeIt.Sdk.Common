@@ -1,9 +1,9 @@
 ﻿
-namespace Sdk.Common
+namespace AsYouLikeIt.Sdk.Common
 {
     using Newtonsoft.Json;
-    using Sdk.Common.Exceptions;
-    using Sdk.Common.Models;
+    using AsYouLikeIt.Sdk.Common.Exceptions;
+    using AsYouLikeIt.Sdk.Common.Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;

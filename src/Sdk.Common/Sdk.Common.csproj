@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Title>Sdk.Common</Title>
+    <Title>As You Like It - Sdk Common</Title>
     <Copyright>Copyright © $([System.DateTime]::Now.Year)</Copyright>
     <Trademark></Trademark>
     <Product>$(Title)</Product>
@@ -19,6 +19,7 @@
        - ApiResponse common object with a strongly typed Data property.
        - Type parser for objects and unknown types.
     </Description>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

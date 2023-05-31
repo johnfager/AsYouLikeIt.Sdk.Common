@@ -1,5 +1,5 @@
 
-namespace Sdk.Common.Serialization
+namespace AsYouLikeIt.Sdk.Common.Serialization
 {
     using System;
     using System.Collections.Generic;

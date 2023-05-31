@@ -1,6 +1,6 @@
-namespace Sdk.Common.Utilities
+namespace AsYouLikeIt.Sdk.Common.Utilities
 {
-    using Sdk.Common.Extensions;
+    using AsYouLikeIt.Sdk.Common.Extensions;
     using System;
     using System.Globalization;
 

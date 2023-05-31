@@ -1,8 +1,8 @@
 ﻿
-namespace Sdk.Common.Models
+namespace AsYouLikeIt.Sdk.Common.Models
 {
     using Newtonsoft.Json;
-    using Sdk.Common.Serialization;
+    using AsYouLikeIt.Sdk.Common.Serialization;
 
     public partial class ApiError
     {
