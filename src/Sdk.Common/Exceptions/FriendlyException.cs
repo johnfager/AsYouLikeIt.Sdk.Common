@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sdk.Common.Exceptions
 {
@@ -23,11 +19,11 @@ namespace Sdk.Common.Exceptions
             {
                 if (this.StatusCode.HasValue && this.StatusSubCode.HasValue)
                 {
-                    return _message + $" --[{this.StatusCode.Value.ToString()}.{this.StatusSubCode.Value.ToString()}]";
+                    return _message + $" --[{this.StatusCode.Value}.{this.StatusSubCode.Value}]";
                 }
                 else if (this.StatusCode.HasValue)
                 {
-                    return _message + $" --[{this.StatusCode.Value.ToString()}]";
+                    return _message + $" --[{this.StatusCode.Value}]";
                 }
                 else
                 {

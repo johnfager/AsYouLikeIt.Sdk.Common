@@ -12,7 +12,7 @@ namespace Sdk.Common.Models
         public string Error { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public int? ErrorLine { get; set; }
+        public long? ErrorLine { get; set; }
 
         public ErrorDetail()
         {
@@ -29,7 +29,7 @@ namespace Sdk.Common.Models
             this.Error = error;
         }
 
-        public ErrorDetail(string fieldName, string error, int? errorLine)
+        public ErrorDetail(string fieldName, string error, long? errorLine)
         {
             this.FieldName = fieldName;
             this.Error = error;

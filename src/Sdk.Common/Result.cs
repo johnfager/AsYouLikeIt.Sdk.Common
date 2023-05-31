@@ -3,6 +3,7 @@ namespace Sdk.Common
 {
     using Newtonsoft.Json;
     using Sdk.Common.Exceptions;
+    using Sdk.Common.Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -179,7 +180,6 @@ namespace Sdk.Common
         {
             this.Message = message;
             this.HasError = hasError;
-            //this.ReturnKey = returnKey;
         }
 
         public Result(string message, bool hasError, int statusCode, int? statusSubCode = null, object returnKey = null)
@@ -196,10 +196,9 @@ namespace Sdk.Common
             this.HasError = true;
             this.Exception = ex;
 
-            if (object.ReferenceEquals(ex.GetType(), typeof(FriendlyException)))
+            if (ex is FriendlyException fex)
             {
-                var fex = (FriendlyException)ex;
-                if ((fex.FriendlyResult != null))
+                if (fex.FriendlyResult != null)
                 {
                     this.Message = fex.FriendlyResult.Message;
                 }
@@ -215,12 +214,8 @@ namespace Sdk.Common
         #endregion
     }
 
-    public class Result<T> : Result 
+    public class Result<T> : Result
     {
-        [JsonIgnore]
-        [Obsolete("Use 'Data' instead.")]
-        public T ReturnObject { get; set; }
-
         public T Data { get; set; }
 
         #region .ctrors
@@ -243,40 +238,5 @@ namespace Sdk.Common
         }
 
         #endregion
-    }
-
-    public class ErrorDetail
-    {
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string FieldName { get; set; }
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string Error { get; set; }
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public int? ErrorLine { get; set; }
-
-        public ErrorDetail()
-        {
-        }
-
-        public ErrorDetail(string fieldName)
-        {
-            this.FieldName = fieldName;
-        }
-
-        public ErrorDetail(string fieldName, string error)
-        {
-            this.FieldName = fieldName;
-            this.Error = error;
-        }
-
-        public ErrorDetail(string fieldName, string error, int? errorLine)
-        {
-            this.FieldName = fieldName;
-            this.Error = error;
-            this.ErrorLine = errorLine;
-        }
-
     }
 }

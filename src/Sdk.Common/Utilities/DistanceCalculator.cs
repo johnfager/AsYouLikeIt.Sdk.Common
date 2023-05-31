@@ -1,5 +1,4 @@
 ﻿
-
 namespace Sdk.Common.Utilities
 {
     using System;

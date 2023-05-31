@@ -1,50 +1,47 @@
 
-namespace JFM.Common.Utilities
+namespace Sdk.Common.Utilities
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
     public class TaskQueue
     {
-        private SemaphoreSlim semaphore;
+        private readonly SemaphoreSlim _semaphore;
 
         public TaskQueue()
         {
-            semaphore = new SemaphoreSlim(1);
+            _semaphore = new SemaphoreSlim(1);
         }
 
         public TaskQueue(int semaphoreCount)
         {
-            semaphore = new SemaphoreSlim(semaphoreCount, semaphoreCount);
+            _semaphore = new SemaphoreSlim(semaphoreCount, semaphoreCount);
         }
 
         public async Task<T> Enqueue<T>(Func<Task<T>> task)
         {
-            await semaphore.WaitAsync();
+            await _semaphore.WaitAsync();
             try
             {
                 return await task();
             }
             finally
             {
-                semaphore.Release();
+                _semaphore.Release();
             }
         }
 
         public async Task Enqueue(Func<Task> task)
         {
-            await semaphore.WaitAsync();
+            await _semaphore.WaitAsync();
             try
             {
                 await task();
             }
             finally
             {
-                semaphore.Release();
+                _semaphore.Release();
             }
         }
     }

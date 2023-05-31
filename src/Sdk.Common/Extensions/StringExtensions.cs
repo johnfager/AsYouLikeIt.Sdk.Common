@@ -1,4 +1,3 @@
-
 namespace Sdk.Common.Extensions
 {
     using System;
@@ -6,13 +5,62 @@ namespace Sdk.Common.Extensions
     using System.Globalization;
     using System.IO;
     using System.Linq;
-    using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading;
     using Utilities;
 
     public static class StringExtensions
     {
+        /// <summary>
+		/// Takes a string and returns a list of GUIDs using the split character provided. Only valid guids will return. 
+		/// Will return an empty list if the string does not contain any valid GUIDs. 
+		/// To support legacy behavior if the split character is ";" then it will match both "," and ";" if you do not
+		/// want this behavior use the override List(Guid) Guidify(this string value, params char[] seperator)
+		/// </summary>
+		/// <param name="value"></param>
+		/// <param name="splitCharacter"></param>
+		/// <returns>An emptry List(Guid) if none are found.</returns>
+		public static List<Guid> Guidify(this string value, string splitCharacter = ";")
+        {
+            var seperator = new char[] { char.Parse(splitCharacter) };
+
+            // To support legacy behavior if the split char is ";" then we also match ","
+            if (splitCharacter == ";")
+            {
+                seperator = new char[] { ',', ';' };
+            }
+
+            return value.Guidify(seperator);
+        }
+
+        /// <summary>
+        /// Takes a string and returns a list of GUIDs using the split character provided. Only valid guids will return. 
+        /// Will return an empty list if the string does not contain any valid GUIDs.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="seperator">List of seperator character to split the string on</param>
+        /// <returns>NULL if no guids are present or a list of guids.</returns>
+        public static List<Guid> Guidify(this string value, params char[] seperator)
+        {
+            var list = new List<Guid>(); // no checking for nulls
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                var guids = value.SplitStringAndTrim(seperator);
+                if (guids != null && guids.Any())
+                {
+                    foreach (var g in guids)
+                    {
+                        if (Guid.TryParse(g, out Guid guid))
+                        {
+                            list.Add(guid);
+                        }
+                    }
+                    return list;
+                }
+            }
+            return list;
+        }
+
 
         public static string ToCsvWithSpace(this IEnumerable<string> helper)
         {
@@ -478,10 +526,15 @@ namespace Sdk.Common.Extensions
 
         public static IEnumerable<string> SplitStringAndTrim(this string helper, string splitCharacter)
         {
+            char splitOn = char.Parse(splitCharacter);
+            return helper.SplitStringAndTrim(splitOn);
+        }
+
+        public static IEnumerable<string> SplitStringAndTrim(this string helper, params char[] seperator)
+        {
             //Get string coll of items
             string[] values = null;
-            char splitOn = char.Parse(splitCharacter);
-            values = helper.Split(new char[] { splitOn });
+            values = helper.Split(seperator);
             var list = new List<string>();
             foreach (var s in values)
             {
@@ -493,7 +546,7 @@ namespace Sdk.Common.Extensions
             }
             return list;
         }
-               
+
         public static string TitleCase(this string helper)
         {
             CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
@@ -813,38 +866,6 @@ namespace Sdk.Common.Extensions
             return Regex.Replace(input, strPatternExp, "");
         }
 
-        public static string TruncateToWordWithEllipses(this string input, int maxChars)
-        {
-            if (input == null)
-            {
-                return null;
-            }
-
-            if (input.Length < maxChars)
-            {
-                return input;
-            }
-
-            var list = Regex.Split(input, @"\s+");
-            var outputList = new List<string>();
-
-            foreach (var word in list)
-            {
-                if (outputList.SelectMany(s => s).Count()           // total chars
-                    + (!outputList.Any() ? 0 : outputList.Count())  // account for spaces
-                    + word.Length                                   // incoming word to add
-                    + 3                                             // ellipses
-                    > maxChars)
-                {
-                    break;
-                }
-
-                outputList.Add(word);
-            }
-
-            return $"{string.Join(" ", outputList)}...";
-        }
-
         /// <summary>
         /// Uses a regular expression to look for a word boundary around the match pattern
         /// </summary>
@@ -875,6 +896,201 @@ namespace Sdk.Common.Extensions
         }
 
         private static readonly HashSet<char> DefaultNonWordCharacters = new HashSet<char> { ',', '.', ':', ';' };
+
+        /// <summary>
+		/// Returns a substring from the start of <paramref name="value"/> no 
+		/// longer than <paramref name="length"/>.
+		/// Returning only whole words is favored over returning a string that 
+		/// is exactly <paramref name="length"/> long. 
+		/// </summary>
+		/// <param name="value">The original string from which the substring 
+		/// will be returned.</param>
+		/// <param name="length">The maximum length of the substring.</param>
+		/// <param name="nonWordCharacters">Characters that, while not whitespace, 
+		/// are not considered part of words and therefor can be removed from a 
+		/// word in the end of the returned value. 
+		/// Defaults to ",", ".", ":" and ";" if null.</param>
+		/// <exception cref="System.ArgumentException">
+		/// Thrown when <paramref name="length"/> is negative
+		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// Thrown when <paramref name="value"/> is null
+		/// </exception>
+		public static string LeftWithoutBreakingWords(
+          this string value,
+          int length,
+          HashSet<char> nonWordCharacters = null)
+        {
+            if (value == null)
+            {
+                throw new ArgumentNullException("value");
+            }
+
+            if (length < 0)
+            {
+                throw new ArgumentException("Negative values not allowed.", "length");
+            }
+
+            if (nonWordCharacters == null)
+            {
+                nonWordCharacters = DefaultNonWordCharacters;
+            }
+
+            if (length >= value.Length)
+            {
+                return value;
+            }
+            int end = length;
+
+            for (int i = end; i > 0; i--)
+            {
+                if (value[i].IsWhitespace())
+                {
+                    break;
+                }
+
+                if (nonWordCharacters.Contains(value[i])
+                    && (value.Length == i + 1 || value[i + 1] == ' '))
+                {
+                    //Removing a character that isn't whitespace but not part 
+                    //of the word either (ie ".") given that the character is 
+                    //followed by whitespace or the end of the string makes it
+                    //possible to include the word, so we do that.
+                    break;
+                }
+                end--;
+            }
+
+            if (end == 0)
+            {
+                //If the first word is longer than the length we favor 
+                //returning it as cropped over returning nothing at all.
+                end = length;
+            }
+
+            return value.Substring(0, end);
+        }
+
+
+        /// <summary>
+        /// Returns a substring from the start of <paramref name="value"/> no 
+        /// longer than <paramref name="length"/>.
+        /// Returning only whole words is favored over returning a string that 
+        /// is exactly <paramref name="length"/> long. 
+        /// </summary>
+        /// <param name="value">The original string from which the substring 
+        /// will be returned.</param>
+        /// <param name="length">The maximum length of the substring.</param>
+        /// <param name="addEllipse">Adds an ellipse to the end if the string is trimmed.</param>
+        /// <param name="nonWordCharacters">Characters that, while not whitespace, 
+        /// are not considered part of words and therefor can be removed from a 
+        /// word in the end of the returned value. 
+        /// Defaults to ",", ".", ":" and ";" if null.</param>
+        /// <exception cref="System.ArgumentException">
+        /// Thrown when <paramref name="length"/> is negative
+        /// </exception>
+        /// <exception cref="System.ArgumentNullException">
+        /// Thrown when <paramref name="value"/> is null
+        /// </exception>
+        public static string LeftWithoutBreakingWords(
+          this string value,
+          int length,
+          bool addEllipse,
+          HashSet<char> nonWordCharacters = null)
+        {
+            if (value == null)
+            {
+                throw new ArgumentNullException("value");
+            }
+
+            if (length < 0)
+            {
+                throw new ArgumentException("Negative values not allowed.", "length");
+            }
+
+            if (nonWordCharacters == null)
+            {
+                nonWordCharacters = DefaultNonWordCharacters;
+            }
+
+            if (length >= value.Length)
+            {
+                return value;
+            }
+            int end = length;
+
+            for (int i = end; i > 0; i--)
+            {
+                if (value[i].IsWhitespace())
+                {
+                    break;
+                }
+
+                if (nonWordCharacters.Contains(value[i])
+                    && (value.Length == i + 1 || value[i + 1] == ' '))
+                {
+                    //Removing a character that isn't whitespace but not part 
+                    //of the word either (ie ".") given that the character is 
+                    //followed by whitespace or the end of the string makes it
+                    //possible to include the word, so we do that.
+                    break;
+                }
+                end--;
+            }
+
+            if (end == 0)
+            {
+                //If the first word is longer than the length we favor 
+                //returning it as cropped over returning nothing at all.
+                end = length;
+            }
+
+            if (addEllipse)
+            {
+                return value.Substring(0, end) + "...";
+            }
+            else
+            {
+                return value.Substring(0, end);
+            }
+        }
+
+        private static bool IsWhitespace(this char character)
+        {
+            return character == ' ' || character == 'n' || character == 't';
+        }
+
+        public static string TruncateToWordWithEllipses(this string input, int maxChars)
+        {
+            if (input == null)
+            {
+                return null;
+            }
+
+            if (input.Length <= maxChars)
+            {
+                return input;
+            }
+
+            var list = Regex.Split(input, @"\s+");
+            var outputList = new List<string>();
+
+            foreach (var word in list)
+            {
+                if (outputList.SelectMany(s => s).Count()           // total chars
+                    + (!outputList.Any() ? 0 : outputList.Count)  // account for spaces
+                    + word.Length                                   // incoming word to add
+                    + 3                                             // ellipses
+                    > maxChars)
+                {
+                    break;
+                }
+
+                outputList.Add(word);
+            }
+
+            return $"{string.Join(" ", outputList)}...";
+        }
 
     }
 }

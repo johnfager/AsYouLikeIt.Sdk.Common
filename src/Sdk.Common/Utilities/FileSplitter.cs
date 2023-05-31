@@ -4,9 +4,6 @@ namespace Sdk.Common.Utilities
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     public static class FileSplitter
     {
@@ -85,7 +82,7 @@ namespace Sdk.Common.Utilities
                         {
                             // complete the old stream
                             sw.Dispose();
-                            list.Add( outputFileName);
+                            list.Add(outputFileName);
                             // redo the stream and counters
                             fileIndex++;
                             currentOutputRow = 0;
@@ -108,7 +105,7 @@ namespace Sdk.Common.Utilities
                 } while (sr.Peek() != -1);
 
                 sw.Dispose();
-                list.Add( outputFileName);
+                list.Add(outputFileName);
             }
             return list;
         }
