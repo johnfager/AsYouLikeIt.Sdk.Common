@@ -1,5 +1,7 @@
 namespace AsYouLikeIt.Sdk.Common.Extensions
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
 
     public static class ByteArrayExtensions
@@ -31,6 +33,19 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
                 sBuilder.Append(helper[i].ToString(hexCode));
             }
             return sBuilder.ToString();
+        }
+
+        public static byte[] Concatinate(this byte[] helper, byte[] add)
+        {
+            IEnumerable<byte> rv = helper.Concat(add);
+            return rv.ToArray();
+        }
+
+        public static byte[] GetBytes(this string hexString)
+        {
+            byte[] bytes = new byte[hexString.Length * sizeof(char)];
+            System.Buffer.BlockCopy(hexString.ToCharArray(), 0, bytes, 0, bytes.Length);
+            return bytes;
         }
     }
 }
