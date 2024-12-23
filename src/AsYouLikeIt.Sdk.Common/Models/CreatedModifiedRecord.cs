@@ -1,8 +1,8 @@
 
 namespace AsYouLikeIt.Sdk.Common.Models
 {
-    using Newtonsoft.Json;
     using System;
+    using System.Text.Json.Serialization;
 
     public interface ICreatedModifiedRecord
     {
@@ -17,17 +17,24 @@ namespace AsYouLikeIt.Sdk.Common.Models
 
     public partial class CreatedModifiedRecord : ICreatedModifiedRecord
     {
-
-        [JsonProperty(Order = 1, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("createdOnUtc")]
+        [JsonPropertyOrder(1)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public DateTime? CreatedOnUtc { get; set; }
 
-        [JsonProperty(Order = 2, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("createdBy")]
+        [JsonPropertyOrder(2)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string CreatedBy { get; set; }
 
-        [JsonProperty(Order = 3, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("modifiedOnUtc")]
+        [JsonPropertyOrder(3)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public DateTime? ModifiedOnUtc { get; set; }
 
-        [JsonProperty(Order = 4, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("modifiedBy")]
+        [JsonPropertyOrder(4)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string ModifiedBy { get; set; }
     }
 }

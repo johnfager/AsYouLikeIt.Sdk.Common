@@ -1,17 +1,19 @@
-
 namespace AsYouLikeIt.Sdk.Common.Models
 {
-    using Newtonsoft.Json;
+    using System.Text.Json.Serialization;
 
     public class ErrorDetail
     {
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("fieldName")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string FieldName { get; set; }
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("error")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string Error { get; set; }
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("errorLine")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public long? ErrorLine { get; set; }
 
         public ErrorDetail()
@@ -20,21 +22,20 @@ namespace AsYouLikeIt.Sdk.Common.Models
 
         public ErrorDetail(string fieldName)
         {
-            this.FieldName = fieldName;
+            FieldName = fieldName;
         }
 
         public ErrorDetail(string fieldName, string error)
         {
-            this.FieldName = fieldName;
-            this.Error = error;
+            FieldName = fieldName;
+            Error = error;
         }
 
         public ErrorDetail(string fieldName, string error, long? errorLine)
         {
-            this.FieldName = fieldName;
-            this.Error = error;
-            this.ErrorLine = errorLine;
+            FieldName = fieldName;
+            Error = error;
+            ErrorLine = errorLine;
         }
-
     }
 }

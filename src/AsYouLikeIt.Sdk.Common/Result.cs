@@ -1,12 +1,12 @@
 ﻿
 namespace AsYouLikeIt.Sdk.Common
 {
-    using Newtonsoft.Json;
     using AsYouLikeIt.Sdk.Common.Exceptions;
-    using AsYouLikeIt.Sdk.Common.Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using AsYouLikeIt.Sdk.Common.Models;
+    using System.Text.Json.Serialization;
 
     public enum MessageTypeOption
     {
@@ -26,35 +26,35 @@ namespace AsYouLikeIt.Sdk.Common
         /// <summary>
         /// Safe to display in the UI to the public or clients.
         /// </summary>
-		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string Message { get; set; }
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string ObjectType { get; set; }
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public object ReturnKey { get; set; }
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string ReturnReferenceKey { get; set; }
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int? StatusCode { get; set; }
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int? StatusSubCode { get; set; }
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string HelpLink { get; set; }
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string RedirectUrl { get; set; }
 
         /// <summary>
         /// Optional value used as a correlation to logs using a unique value.
         /// Can be helpful to assign with system info, origination, datetime stamping and other values as part of a derived key scheme.
         /// </summary>
-	    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+	    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string ReferenceId { get; set; }
 
         [JsonIgnore]
@@ -124,7 +124,7 @@ namespace AsYouLikeIt.Sdk.Common
         /// <value></value>
         /// <returns></returns>
         /// <remarks></remarks>
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public ICollection<Result> SubResults
         {
             get
@@ -151,7 +151,7 @@ namespace AsYouLikeIt.Sdk.Common
         /// <value></value>
         /// <returns></returns>
         /// <remarks></remarks>
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public ICollection<ErrorDetail> Errors
         {
             get
