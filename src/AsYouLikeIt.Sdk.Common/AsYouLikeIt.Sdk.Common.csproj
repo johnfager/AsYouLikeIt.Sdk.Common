@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<Title>As You Like It - Sdk Common</Title>
+		<Copyright>Copyright © $([System.DateTime]::Now.Year)</Copyright>
+		<Trademark></Trademark>
+		<Product>$(Title)</Product>
+		<Version>3.1.0.0</Version>
+		<Description>
+			Basic coding patterns to assist with everyday common needs.
+			- Extension methods for strings, datetimes, byte arrays, guids, steams.
+			- Common Result object for feedback and information from functions to the other code layers.
+			- Friendly exceptions with attached Results.
+			- Common error detail information.
+			- ApiResponse common object with a strongly typed Data property.
+			- Type parser for objects and unknown types.
+		</Description>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<PackageProjectUrl></PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<RepositoryUrl>https://github.com/johnfager/AsYouLikeIt.Sdk.Common</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<Authors>John Fager</Authors>
+		<!-- source link-->
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>Embedded</DebugType>
+		<EmbedAllSources>True</EmbedAllSources>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\..\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
+
+</Project>
