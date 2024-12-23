@@ -26,6 +26,10 @@ namespace AsYouLikeIt.Sdk.Common
 
             public static readonly string FriendlyArgumentException = "The request contains format errors.";
 
+            public static readonly string UnauthorizedAccessMessage = "The request is not authorized. Authenticate your account and try again.";
+
+            public static readonly string ForbiddenAccessMessage = "Access denied.";
+
             //Update messages
             public static readonly string UpdateInvalidRecord = "Cannot update because the record does not exist in the database";
 
