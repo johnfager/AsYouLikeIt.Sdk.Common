@@ -1,5 +1,6 @@
 ﻿namespace AsYouLikeIt.Sdk.Common.Extensions
 {
+    using AsYouLikeIt.Sdk.Common.Api;
     using AsYouLikeIt.Sdk.Common.Models;
     using System;
     using System.Collections.Generic;
@@ -110,7 +111,7 @@
                     // We don't copy over the data attribute at this time, but could in the future
                     arr[i] = list[i].ToApiResponse();
                 }
-                apiResponse.SubResponses = arr;
+                apiResponse.SubResponses = arr is null ? null : arr.ToList();
             }
         }
     }

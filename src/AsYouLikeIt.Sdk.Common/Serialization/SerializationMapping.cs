@@ -5,26 +5,29 @@ namespace AsYouLikeIt.Sdk.Common.Serialization
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using System.Text.Json.Serialization;
     using System.Threading.Tasks;
-    using Newtonsoft.Json;
 
     public class SerializationMapping
     {
-        [JsonProperty(Order = 1, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("assemblyPattern")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string AssemblyPattern { get; set; }
 
-        [JsonProperty(Order = 2, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("typeNamePattern")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string TypeNamePattern { get; set; }
 
-        [JsonProperty(Order = 3, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("assemblyReplacement")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string AssemblyReplacement { get; set; }
 
         public bool AssemblyIsFullReplacement { get; set; }
 
-        [JsonProperty(Order = 4, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("typeNameReplacement")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string TypeNameReplacement { get; set; }
 
         public bool TypeNameIsFullReplacement { get; set; }
-
     }
 }
