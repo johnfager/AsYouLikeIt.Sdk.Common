@@ -10,54 +10,42 @@ namespace AsYouLikeIt.Sdk.Common.Hashing
     public static class HasherRfc2898
     {
         private const int PBKDF2SubkeyLength = 256 / 8; // 256 bits
-
         private const int SaltSize = 128 / 8; // 128 bits
-
-        public static string HashValue10000(string input)
-        {
-            return HashValue(input, 10000);
-        }
 
         /// <summary>
         /// Returns an RFC 2898 hash value for the specified password.
         /// </summary>
         /// <param name="input"></param>
-        /// <param name="iterations"></param>
         /// <returns></returns>
-        public static string HashValue(string input, int iterations)
+        public static string HashValue(string input, int interations = 10000)
         {
             byte[] salt;
             byte[] buffer2;
             if (input == null)
             {
-                throw new ArgumentNullException(nameof(input));
+                throw new ArgumentNullException("input");
             }
-            using (var bytes = new Rfc2898DeriveBytes(input, SaltSize, iterations))
+            using (var bytes = new Rfc2898DeriveBytes(input, SaltSize, interations))
             {
                 salt = bytes.Salt;
                 buffer2 = bytes.GetBytes(PBKDF2SubkeyLength);
             }
-            var dst = new byte[PBKDF2SubkeyLength + SaltSize + 1];
+            byte[] dst = new byte[PBKDF2SubkeyLength + SaltSize + 1];
             Buffer.BlockCopy(salt, 0, dst, 1, SaltSize);
             Buffer.BlockCopy(buffer2, 0, dst, 1 + SaltSize, 32);
             return Convert.ToBase64String(dst);
         }
 
-        public static bool VerifyHashedValues10000(string hashedValue, string input)
-        {
-            return VerifyHashedValues(hashedValue, input, 10000);
-        }
-
-        // hashedPassword must be of the format of HashWithPassword (salt + Hash(salt+input)
-        public static bool VerifyHashedValues(string hashedValue, string input, int iterations)
+        // hashedPassword must be of the format of HashWithPassword (salt + Hash(salt+input))
+        public static bool VerifyHashedValues(string hashedValue, string input, int interations = 10000)
         {
             if (hashedValue == null)
             {
-                throw new ArgumentNullException(nameof(hashedValue));
+                throw new ArgumentNullException("hashedValue");
             }
             if (input == null)
             {
-                throw new ArgumentNullException(nameof(input));
+                throw new ArgumentNullException("input");
             }
 
             var hashedPasswordBytes = Convert.FromBase64String(hashedValue);
@@ -70,13 +58,13 @@ namespace AsYouLikeIt.Sdk.Common.Hashing
                 return false;
             }
 
-            var salt = new byte[SaltSize];
+            byte[] salt = new byte[SaltSize];
             Buffer.BlockCopy(hashedPasswordBytes, 1, salt, 0, SaltSize);
-            var storedSubkey = new byte[PBKDF2SubkeyLength];
+            byte[] storedSubkey = new byte[PBKDF2SubkeyLength];
             Buffer.BlockCopy(hashedPasswordBytes, 1 + SaltSize, storedSubkey, 0, PBKDF2SubkeyLength);
 
             byte[] generatedSubkey;
-            using (var deriveBytes = new Rfc2898DeriveBytes(input, salt, iterations))
+            using (var deriveBytes = new Rfc2898DeriveBytes(input, salt, interations))
             {
                 generatedSubkey = deriveBytes.GetBytes(PBKDF2SubkeyLength);
             }
@@ -104,5 +92,6 @@ namespace AsYouLikeIt.Sdk.Common.Hashing
             }
             return areSame;
         }
+
     }
 }

@@ -15,7 +15,6 @@ namespace AsYouLikeIt.Sdk.Common.Api
         /// Whether or not the call succeeded.
         /// </summary>
         [JsonPropertyName("succeeded")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyOrder(1)]
         public bool Succeeded { get; set; }
 
@@ -122,7 +121,7 @@ namespace AsYouLikeIt.Sdk.Common.Api
         /// Set to true if more data exists and a return trip is need to continue fetching data.
         /// </summary>
         [JsonPropertyName("more_data_exists")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyOrder(14)]
         public bool MoreDataExists { get; set; }
 
