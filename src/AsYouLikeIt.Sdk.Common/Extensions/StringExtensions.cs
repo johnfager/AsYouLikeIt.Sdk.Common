@@ -109,9 +109,10 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
             }
             input = input.RemoveAccents();
             //Strip anything else that won't work
-            input = (input.StripNonAlphaNumericDashUnderscorePeriod());
+            input = input.StripNonAlllowedFileNameAndBlobNameCharacters();
             return input;
         }
+
         public static string MakeBlobNameSafe(this string input, bool makeLower = false)
         {
             var blobName = input;
@@ -120,32 +121,38 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
                 throw new ArgumentNullException(nameof(blobName));
             }
             blobName = blobName.Trim().SwitchBackSlashToForwardSlash();
-            var output = blobName.StripAllLeadingAndTrailingSlashes();
-            var sections = output.SplitStringAndTrim("/");
-            //bool blobNameStartsWithSlash = blobName.StartsWith("/");
-            //bool blobNameEndsWithSlash = blobName.EndsWith("/");
-            string parsed = "";
-            var divider = "";
-            foreach (var section in sections)
+            blobName = blobName.StripAllLeadingAndTrailingSlashes();
+            var segments = blobName.SplitStringAndTrim("/").ToList();
+            var count = segments.Count();
+            for (int i = 0; i < count; i++)
             {
+                var segment = segments[i];
+                if (string.IsNullOrEmpty(segment))
+                {
+                    continue;
+                }
                 if (makeLower)
                 {
-                    parsed += divider + section.ToLowerInvariant().MakeFileNameSafe();
+                    segment = segment.ToLowerInvariant();
                 }
-                else
+                segment = segment.MakeFileNameSafe();
+                if (segment.Length > 255)
                 {
-                    parsed += divider + section.MakeFileNameSafe();
+                    throw new ArgumentException($"Each path segment must be no more than 255 characters long. Segment: {segment}");
                 }
-                divider = "/";
+                segments[i] = segment; // must push back in
             }
             if (string.IsNullOrEmpty(blobName))
             {
-                throw new ArgumentNullException("The file path is not valid. Input: " + input);
+                throw new ArgumentNullException($"The file path is not valid. Input: {input}");
             }
-            output = parsed;
-            return output;
+            blobName = string.Join("/", segments);
+            if (blobName.Length > 1024)
+            {
+                throw new ArgumentException($"The file path is not valid. The length of the blob name exceeds 1024 characters. BlobName: {input}");
+            }
+            return blobName;
         }
-
 
         /// <summary>
         /// Replaces text in a string using Regular Expressions
@@ -609,16 +616,13 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
         /// <remarks></remarks>
         public static string StripNonAlphaNumeric(this string input)
         {
-
             if (input == null)
             {
                 return string.Empty;
             }
-
             string removeInvalidChars = RegExPatterns.StripNonAlphaNumeric;
-            input = Regex.Replace(input, removeInvalidChars, string.Empty);
-            return input;
-
+            var output = Regex.Replace(input, removeInvalidChars, string.Empty);
+            return output;
         }
 
         public static string StripNonNumeric(this string input)
@@ -628,8 +632,8 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
                 return string.Empty;
             }
             string removeInvalidChars = RegExPatterns.Numbers;
-            input = Regex.Replace(input, removeInvalidChars, string.Empty);
-            return input;
+            var output = Regex.Replace(input, removeInvalidChars, string.Empty);
+            return output;
         }
 
         public static string StripNonNumericExceptPeriods(this string input)
@@ -639,15 +643,15 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
                 return string.Empty;
             }
             string removeInvalidChars = RegExPatterns.NumbersAndPeriods;
-            input = Regex.Replace(input, removeInvalidChars, string.Empty);
-            return input;
+            var output = Regex.Replace(input, removeInvalidChars, string.Empty);
+            return output;
         }
 
         public static string StripArraySpecification(string input)
         {
             var regEx = @"\[(.*?)\]";
-            var replaced = Regex.Replace(input, regEx, string.Empty);
-            return replaced;
+            var output = Regex.Replace(input, regEx, string.Empty);
+            return output;
         }
 
         public static string RegexReplace(this string input, string regExPattern)
@@ -657,10 +661,9 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
                 return string.Empty;
             }
             string removeInvalidChars = regExPattern;
-            input = Regex.Replace(input, removeInvalidChars, string.Empty);
-            return input;
+            var output = Regex.Replace(input, removeInvalidChars, string.Empty);
+            return output;
         }
-
 
         public static string StripNonAlphaNumericDashUnderscore(this string input)
         {
@@ -669,8 +672,8 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
                 return string.Empty;
             }
             string removeInvalidChars = "[^a-zA-Z0-9_\\-]"; //RegExPatterns.AlphaNumericDashesUnderscores; //"[a-zA-Z0-9_\\-]+"
-            input = Regex.Replace(input, removeInvalidChars, string.Empty);
-            return input;
+            var output = Regex.Replace(input, removeInvalidChars, string.Empty);
+            return output;
         }
 
         public static string StripNonAlphaNumericDashUnderscorePeriod(this string input)
@@ -680,8 +683,19 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
                 return string.Empty;
             }
             string removeInvalidChars = "[^a-zA-Z0-9_\\-\\.]";
-            input = Regex.Replace(input, removeInvalidChars, string.Empty);
-            return input;
+            var output = Regex.Replace(input, removeInvalidChars, string.Empty);
+            return output;
+        }
+
+        public static string StripNonAlllowedFileNameAndBlobNameCharacters(this string input)
+        {
+            if (input == null)
+            {
+                return string.Empty;
+            }
+            string removeInvalidChars = @"[^a-zA-Z0-9_\-\./@!#$%^&*()+=\[\]{};',]";
+            var output = Regex.Replace(input, removeInvalidChars, string.Empty);
+            return output;
         }
 
         public static string SwitchBackSlashToForwardSlash(this string input)
