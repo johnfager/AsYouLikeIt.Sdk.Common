@@ -23,7 +23,7 @@ namespace AsYouLikeIt.Sdk.Common.Exceptions
         /// <param name="message">Internal message attached to the underlying exception for logging purposes.</param>
 		public DataNotFoundException(string message) : base(message)
         {
-            base.FriendlyResult = new Result(Dialog.Messages.DataNotFoundMessage, true) { StatusCode = 404 };
+            base.FriendlyResult = new Result(message ?? Dialog.Messages.DataNotFoundMessage, true) { StatusCode = 404 };
         }
     }
 }

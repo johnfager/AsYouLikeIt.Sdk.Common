@@ -61,7 +61,6 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
             return list;
         }
 
-
         public static string ToCsvWithSpace(this IEnumerable<string> helper)
         {
             if (helper == null || !helper.Any())
@@ -78,7 +77,6 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
             return (T)Enum.Parse(typeof(T), value);
         }
 
-
         public static Stream GenerateStreamFromString(this string s)
         {
             var stream = new MemoryStream();
@@ -88,7 +86,6 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
             stream.Position = 0;
             return stream;
         }
-
 
         public static bool IsGuid(this string expression)
         {
@@ -230,7 +227,6 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
 
         }
 
-
         public static string SetFixedLengthWithSpaces(this string input, int length)
         {
             string output = input;
@@ -259,7 +255,6 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
             treated = treated.Replace("Po Box", "PO Box");
             return treated;
         }
-
 
         public static bool IsValidKeyStrict(this string input, int maxLength)
         {
@@ -370,6 +365,16 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
                 return null;
             }
             return (input.Trim().Replace(" ", "-")).Trim().StripNonAlphaNumericDashUnderscorePeriod().Replace("---", "-").Replace("--", "-").Trim('-').Trim('_');
+        }
+
+        public static string DefaultIfNullOrEmpty(this string input, string defaultValue, bool trimWhiteSpace = false)
+        {
+            var output = trimWhiteSpace ? EnsureNullIfEmptyAndTrim(input) : input;
+            if (string.IsNullOrEmpty(output))
+            {
+                return defaultValue;
+            }
+            return input;
         }
 
         public static string EnsureNullIfEmptyAndTrim(this string text)
