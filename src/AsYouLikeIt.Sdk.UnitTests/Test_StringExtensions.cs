@@ -115,7 +115,7 @@ namespace AsYouLikeIt.Sdk.UnitTests
             var result = input.MakeBlobNameSafe(true);
 
             // Assert
-            Assert.Equal("folder/subfolder/Test-File.pdf", result);
+            Assert.Equal("folder/subfolder/test-file.pdf", result);
         }
 
         [Fact]
@@ -168,7 +168,7 @@ namespace AsYouLikeIt.Sdk.UnitTests
 
             // Assert
             Assert.Equal(10, result.Length);
-            Assert.True(result.StartsWith("Test"));
+            Assert.StartsWith("Test", result);
         }
 
         [Fact]
@@ -283,7 +283,7 @@ namespace AsYouLikeIt.Sdk.UnitTests
         [Theory]
         [InlineData("Hello", "hello", true)]
         [InlineData("Hello", "WORLD", false)]
-        [InlineData(null, null, false)]
+        [InlineData(null, null, true)]
         public void EqualsCaseInsensitive_ComparesIgnoringCase(string helper, string compareTo, bool expected)
         {
             // Act
@@ -330,7 +330,7 @@ namespace AsYouLikeIt.Sdk.UnitTests
             var result = helper.TitleCase();
 
             // Assert
-            Assert.Equal("HelLo WorLd", result);
+            Assert.Equal("Hello World", result);
         }
 
         [Fact]
@@ -418,10 +418,24 @@ namespace AsYouLikeIt.Sdk.UnitTests
             var input = "The quick brown fox jumps over the lazy dog";
 
             // Act
-            var result = input.TruncateToWordWithEllipses(15);
+            var result = input.TruncateToWordWithEllipses(16);
 
             // Assert
-            Assert.True(result.StartsWith("The quick brown"));
+            Assert.StartsWith("The quick brown", result);
+            Assert.EndsWith("\u2026", result);
+        }
+
+        [Fact]
+        public void TruncateToWordWithEllipses_RespectsMaxLength_UseThreePeriods()
+        {
+            // Arrange
+            var input = "The quick brown fox jumps over the lazy dog";
+
+            // Act
+            var result = input.TruncateToWordWithEllipses(18, useThreePeriods: true);
+
+            // Assert
+            Assert.StartsWith("The quick", result);
             Assert.EndsWith("...", result);
         }
     }

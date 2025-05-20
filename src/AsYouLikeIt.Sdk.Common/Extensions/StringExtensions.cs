@@ -1079,7 +1079,7 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
             return character == ' ' || character == 'n' || character == 't';
         }
 
-        public static string TruncateToWordWithEllipses(this string input, int maxChars)
+        public static string TruncateToWordWithEllipses(this string input, int maxChars, bool useThreePeriods = false)
         {
             if (input == null)
             {
@@ -1099,7 +1099,7 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
                 if (outputList.SelectMany(s => s).Count()           // total chars
                     + (!outputList.Any() ? 0 : outputList.Count)  // account for spaces
                     + word.Length                                   // incoming word to add
-                    + 3                                             // ellipses
+                    + (useThreePeriods ? 3 : 1)                                           // ellipses
                     > maxChars)
                 {
                     break;
@@ -1108,7 +1108,7 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
                 outputList.Add(word);
             }
 
-            return $"{string.Join(" ", outputList)}...";
+            return $"{string.Join(" ", outputList)}{(useThreePeriods ? "..." : "\u2026")}";
         }
 
     }
