@@ -9,7 +9,7 @@
 		<Copyright>Copyright © $([System.DateTime]::Now.Year)</Copyright>
 		<Trademark></Trademark>
 		<Product>$(Title)</Product>
-		<Version>4.0.0.5-beta</Version>		
+		<Version>4.0.0.6-beta</Version>		
 		<Description>
 			Basic coding patterns to assist with everyday common needs.
 			- Extension methods for strings, datetimes, byte arrays, guids, steams.
@@ -18,7 +18,9 @@
 			- Common error detail information.
 			- ApiResponse common object with a strongly typed Data property.
 			- Type parser for objects and unknown types.
-			- [BREAKING CHANGE] Updated file name string extension and blob name safe functions to be more accomodating. 
+			- [BREAKING CHANGE] Updated file name string extension and blob name safe functions to be more accomodating.
+			- Add IDateRange and DateRange classes to assist with date range validation and parsing.
+			- Patch Serializer settings to avoid exception when changing a property after initial use.
 		</Description>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<PackageProjectUrl></PackageProjectUrl>

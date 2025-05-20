@@ -61,7 +61,6 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
             return list;
         }
 
-
         public static string ToCsvWithSpace(this IEnumerable<string> helper)
         {
             if (helper == null || !helper.Any())
@@ -78,7 +77,6 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
             return (T)Enum.Parse(typeof(T), value);
         }
 
-
         public static Stream GenerateStreamFromString(this string s)
         {
             var stream = new MemoryStream();
@@ -88,7 +86,6 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
             stream.Position = 0;
             return stream;
         }
-
 
         public static bool IsGuid(this string expression)
         {
@@ -230,7 +227,6 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
 
         }
 
-
         public static string SetFixedLengthWithSpaces(this string input, int length)
         {
             string output = input;
@@ -259,7 +255,6 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
             treated = treated.Replace("Po Box", "PO Box");
             return treated;
         }
-
 
         public static bool IsValidKeyStrict(this string input, int maxLength)
         {
@@ -370,6 +365,16 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
                 return null;
             }
             return (input.Trim().Replace(" ", "-")).Trim().StripNonAlphaNumericDashUnderscorePeriod().Replace("---", "-").Replace("--", "-").Trim('-').Trim('_');
+        }
+
+        public static string DefaultIfNullOrEmpty(this string input, string defaultValue, bool trimWhiteSpace = false)
+        {
+            var output = trimWhiteSpace ? EnsureNullIfEmptyAndTrim(input) : input;
+            if (string.IsNullOrEmpty(output))
+            {
+                return defaultValue;
+            }
+            return input;
         }
 
         public static string EnsureNullIfEmptyAndTrim(this string text)
@@ -1074,7 +1079,7 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
             return character == ' ' || character == 'n' || character == 't';
         }
 
-        public static string TruncateToWordWithEllipses(this string input, int maxChars)
+        public static string TruncateToWordWithEllipses(this string input, int maxChars, bool useThreePeriods = false)
         {
             if (input == null)
             {
@@ -1094,7 +1099,7 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
                 if (outputList.SelectMany(s => s).Count()           // total chars
                     + (!outputList.Any() ? 0 : outputList.Count)  // account for spaces
                     + word.Length                                   // incoming word to add
-                    + 3                                             // ellipses
+                    + (useThreePeriods ? 3 : 1)                                           // ellipses
                     > maxChars)
                 {
                     break;
@@ -1103,7 +1108,7 @@ namespace AsYouLikeIt.Sdk.Common.Extensions
                 outputList.Add(word);
             }
 
-            return $"{string.Join(" ", outputList)}...";
+            return $"{string.Join(" ", outputList)}{(useThreePeriods ? "..." : "\u2026")}";
         }
 
     }

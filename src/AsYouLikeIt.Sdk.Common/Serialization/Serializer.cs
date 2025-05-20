@@ -11,25 +11,9 @@ namespace AsYouLikeIt.Sdk.Common.Serialization
 
     public class Serializer
     {
-        private static JsonSerializerOptions _serializerOptions;
+        //private static JsonSerializerOptions _serializerOptions;
 
         public static bool ErrorOnMissingMember { get; set; } = false;
-
-        public static JsonSerializerOptions SerializerOptions
-        {
-            get
-            {
-                if (_serializerOptions == null)
-                {
-                    _serializerOptions = GetDefaultSerializerOptions();
-                }
-                return _serializerOptions;
-            }
-            set
-            {
-                _serializerOptions = value;
-            }
-        }
 
         public static JsonSerializerOptions GetDefaultSerializerOptions()
         {
@@ -49,7 +33,7 @@ namespace AsYouLikeIt.Sdk.Common.Serialization
 
         public static string SerializeToJson(object obj, bool indented)
         {
-            var options = SerializerOptions;
+            var options = GetDefaultSerializerOptions();
             options.WriteIndented = indented;
             return JsonSerializer.Serialize(obj, options);
         }
@@ -61,7 +45,8 @@ namespace AsYouLikeIt.Sdk.Common.Serialization
 
         public static string SerializeToJson(object obj, bool indented, JsonSerializerOptions jsonSerializerOptions)
         {
-            jsonSerializerOptions.WriteIndented = indented;
+            var options = new JsonSerializerOptions(jsonSerializerOptions);
+            options.WriteIndented = indented;
             return JsonSerializer.Serialize(obj, jsonSerializerOptions);
         }
 
@@ -89,7 +74,7 @@ namespace AsYouLikeIt.Sdk.Common.Serialization
 
         public static object DeserializeFromJson(string jsonText, Type type)
         {
-            return JsonSerializer.Deserialize(jsonText, type, SerializerOptions);
+            return JsonSerializer.Deserialize(jsonText, type, GetDefaultSerializerOptions());
         }
 
         public static object DeserializeFromJson(string jsonText, Type type, JsonSerializerOptions options)
@@ -99,7 +84,7 @@ namespace AsYouLikeIt.Sdk.Common.Serialization
 
         public static T DeserializeFromJson<T>(string jsonText) where T : class
         {
-            return JsonSerializer.Deserialize<T>(jsonText, SerializerOptions);
+            return JsonSerializer.Deserialize<T>(jsonText, GetDefaultSerializerOptions());
         }
 
         public static T DeserializeFromJson<T>(string jsonText, JsonSerializerOptions options) where T : class
