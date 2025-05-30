@@ -1,7 +1,9 @@
 namespace AsYouLikeIt.Sdk.Common.Models
 {
+    using System.Diagnostics;
     using System.Text.Json.Serialization;
 
+    [DebuggerDisplay("{FieldName} - {Error}")]
     public class ErrorDetail
     {
         [JsonPropertyName("fieldName")]

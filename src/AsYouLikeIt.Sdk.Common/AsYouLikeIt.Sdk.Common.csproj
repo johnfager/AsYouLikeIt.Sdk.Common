@@ -9,7 +9,7 @@
 		<Copyright>Copyright © $([System.DateTime]::Now.Year)</Copyright>
 		<Trademark></Trademark>
 		<Product>$(Title)</Product>
-		<Version>4.0.0.6-beta</Version>		
+		<Version>4.0.0.8-beta</Version>		
 		<Description>
 			Basic coding patterns to assist with everyday common needs.
 			- Extension methods for strings, datetimes, byte arrays, guids, steams.
@@ -21,6 +21,8 @@
 			- [BREAKING CHANGE] Updated file name string extension and blob name safe functions to be more accomodating.
 			- Add IDateRange and DateRange classes to assist with date range validation and parsing.
 			- Patch Serializer settings to avoid exception when changing a property after initial use.
+			- Add DateHelper and tests to work with date based data points.
+			- Enhance debugging attributes on models.
 		</Description>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<PackageProjectUrl></PackageProjectUrl>
