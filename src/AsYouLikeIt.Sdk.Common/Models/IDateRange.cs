@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AsYouLikeIt.Sdk.Common.Models
 {
-    public interface IDateRange
+    public interface IDateRange : IEquatable<IDateRange>
     {
         DateTime? StartDate { get; set; }
 

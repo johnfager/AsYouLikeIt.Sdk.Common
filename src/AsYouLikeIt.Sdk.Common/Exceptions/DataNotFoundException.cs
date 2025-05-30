@@ -25,5 +25,10 @@ namespace AsYouLikeIt.Sdk.Common.Exceptions
         {
             base.FriendlyResult = new Result(message ?? Dialog.Messages.DataNotFoundMessage, true) { StatusCode = 404 };
         }
+
+        public DataNotFoundException(string fieldName, string fieldValue, string objectType = null) : base(string.IsNullOrEmpty(objectType) ? $"{fieldName} '{fieldValue}' could not be found." : $"{objectType} with {fieldName} '{fieldValue}' could not be found.")
+        {
+            base.FriendlyResult = new Result(string.IsNullOrEmpty(objectType) ? $"{fieldName} '{fieldValue}' could not be found." : $"{objectType} with {fieldName} '{fieldValue}' could not be found.", true) { StatusCode = 404 };
+        }
     }
 }
