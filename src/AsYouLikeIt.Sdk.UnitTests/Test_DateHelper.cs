@@ -34,6 +34,45 @@ namespace AsYouLikeIt.Sdk.UnitTests
         }
 
         [Fact]
+        public void GetStartOfWeekDates_And_EndOfWeekDates_ReturnExpectedDates()
+        {
+            // Arrange
+            // March 4, 2025 is a Tuesday. We'll cover 4 weeks.
+            DateTime start = new DateTime(2025, 03, 04);
+            DateTime end = new DateTime(2025, 03, 31);
+
+            // Act
+            var startOfWeekDates = DateHelper.GetStartOfWeekDates(start, end).OrderBy(d => d).ToArray();
+            var endOfWeekDates = DateHelper.GetEndOfWeekDates(start, end).OrderBy(d => d).ToArray();
+
+            // Assert: Check counts
+            Assert.Equal(4, startOfWeekDates.Length);
+            Assert.Equal(4, endOfWeekDates.Length);
+
+            // Assert: Check actual dates
+            // For March 2025, weeks starting on Sunday:
+            // Week 1: Sunday, March 2 - Saturday, March 8
+            // Week 2: Sunday, March 9 - Saturday, March 15
+            // Week 3: Sunday, March 16 - Saturday, March 22
+            // Week 4: Sunday, March 23 - Saturday, March 29
+            Assert.Equal(new[]
+            {
+                new DateTime(2025, 3, 2),
+                new DateTime(2025, 3, 9),
+                new DateTime(2025, 3, 16),
+                new DateTime(2025, 3, 23)
+            }, startOfWeekDates);
+
+            Assert.Equal(new[]
+            {
+                new DateTime(2025, 3, 8),
+                new DateTime(2025, 3, 15),
+                new DateTime(2025, 3, 22),
+                new DateTime(2025, 3, 29)
+            }, endOfWeekDates);
+        }
+
+        [Fact]
         public void GetStartOfMonthDates_ReturnsSameCountAsEndOfMonthDates()
         {
             // Arrange
@@ -47,41 +86,85 @@ namespace AsYouLikeIt.Sdk.UnitTests
             // Assert: Both sets should have the same count.
             Assert.Equal(startOfMonthDates.Count, endOfMonthDates.Count);
             // Additionally, for this date range, expected count should be 3.
-            Assert.Equal(3, startOfMonthDates.Count);
+            Assert.Equal(4, startOfMonthDates.Count);
         }
 
         [Fact]
-        public void GetStartOfQuarterDates_ReturnsSameCountAsEndOfQuarterDates()
+        public void GetStartOfMonthDates_And_EndOfMonthDates_ReturnExpectedDates()
         {
             // Arrange
-            DateTime start = new DateTime(2025, 01, 01);
-            DateTime end = new DateTime(2026, 01, 01); // full year quarters
+            // Start and end are in different months, and the range covers partial months at both ends.
+            DateTime start = new DateTime(2025, 01, 15);
+            DateTime end = new DateTime(2025, 04, 10);
 
             // Act
-            HashSet<DateTime> startOfQuarterDates = DateHelper.GetStartOfQuarterDates(start, end);
-            HashSet<DateTime> endOfQuarterDates = DateHelper.GetEndOfQuarterDates(start, end);
+            var startOfMonthDates = DateHelper.GetStartOfMonthDates(start, end).OrderBy(d => d).ToArray();
+            var endOfMonthDates = DateHelper.GetEndOfMonthDates(start, end).OrderBy(d => d).ToArray();
 
-            // Assert: Both sets should have the same count.
-            Assert.Equal(startOfQuarterDates.Count, endOfQuarterDates.Count);
-            // For a full year starting at Jan 1 and ending just before the next Jan 1, expect 4 quarters.
-            Assert.Equal(4, startOfQuarterDates.Count);
+            // Assert: Check counts (should include Jan, Feb, Mar, Apr)
+            Assert.Equal(4, startOfMonthDates.Length);
+            Assert.Equal(4, endOfMonthDates.Length);
+
+            // Assert: Check actual dates
+            Assert.Equal(new[]
+            {
+                new DateTime(2025, 1, 1),
+                new DateTime(2025, 2, 1),
+                new DateTime(2025, 3, 1),
+                new DateTime(2025, 4, 1)
+            }, startOfMonthDates);
+
+            Assert.Equal(new[]
+            {
+                new DateTime(2025, 1, 31),
+                new DateTime(2025, 2, 28),
+                new DateTime(2025, 3, 31),
+                new DateTime(2025, 4, 30)
+            }, endOfMonthDates);
+
+            // Additional: Check that the months containing the start and end dates are included
+            Assert.Contains(startOfMonthDates, d => d.Month == start.Month && d.Year == start.Year);
+            Assert.Contains(startOfMonthDates, d => d.Month == end.Month && d.Year == end.Year);
+            Assert.Contains(endOfMonthDates, d => d.Month == start.Month && d.Year == start.Year);
+            Assert.Contains(endOfMonthDates, d => d.Month == end.Month && d.Year == end.Year);
         }
 
         [Fact]
-        public void GetStartOfYearDates_ReturnsSameCountAsEndOfYearDates()
+        public void GetStartOfYearDates_And_EndOfYearDates_ReturnExpectedDates()
         {
             // Arrange
-            DateTime start = new DateTime(2025, 01, 01);
-            DateTime end = new DateTime(2027, 01, 01); // covers 2025 and 2026
+            // Start and end are in different years, and the range covers partial years at both ends.
+            DateTime start = new DateTime(2023, 5, 10);
+            DateTime end = new DateTime(2025, 8, 20);
 
             // Act
-            HashSet<DateTime> startOfYearDates = DateHelper.GetStartOfYearDates(start, end);
-            HashSet<DateTime> endOfYearDates = DateHelper.GetEndOfYearDates(start, end);
+            var startOfYearDates = DateHelper.GetStartOfYearDates(start, end).OrderBy(d => d).ToArray();
+            var endOfYearDates = DateHelper.GetEndOfYearDates(start, end).OrderBy(d => d).ToArray();
 
-            // Assert: Both sets should have the same count.
-            Assert.Equal(startOfYearDates.Count, endOfYearDates.Count);
-            // For this range, expect 2 years.
-            Assert.Equal(2, startOfYearDates.Count);
+            // Assert: Check counts (should include 2023, 2024, 2025)
+            Assert.Equal(3, startOfYearDates.Length);
+            Assert.Equal(3, endOfYearDates.Length);
+
+            // Assert: Check actual dates
+            Assert.Equal(new[]
+            {
+                new DateTime(2023, 1, 1),
+                new DateTime(2024, 1, 1),
+                new DateTime(2025, 1, 1)
+            }, startOfYearDates);
+
+            Assert.Equal(new[]
+            {
+                new DateTime(2023, 12, 31),
+                new DateTime(2024, 12, 31),
+                new DateTime(2025, 12, 31)
+            }, endOfYearDates);
+
+            // Additional: Check that the years containing the start and end dates are included
+            Assert.Contains(startOfYearDates, d => d.Year == start.Year);
+            Assert.Contains(startOfYearDates, d => d.Year == end.Year);
+            Assert.Contains(endOfYearDates, d => d.Year == start.Year);
+            Assert.Contains(endOfYearDates, d => d.Year == end.Year);
         }
 
         #region CreateDataPointsAndFillMissingWithNull Tests
@@ -274,6 +357,129 @@ namespace AsYouLikeIt.Sdk.UnitTests
 
         #endregion
 
+        [Fact]
+        public void GetMonthlyRanges_ReturnsExpectedRanges()
+        {
+            // Arrange
+            var start = new DateTime(2025, 1, 15);
+            var end = new DateTime(2025, 3, 20);
+
+            // Act
+            var notAdjusted = DateHelper.GetMonthlyRanges(start, end, false);
+            var adjusted = DateHelper.GetMonthlyRanges(start, end, true);
+
+            // Assert: Not adjusted (should be full months)
+            Assert.Equal(3, notAdjusted.Count);
+            Assert.Equal(new DateTime(2025, 1, 1), notAdjusted[0].StartDate);
+            Assert.Equal(new DateTime(2025, 1, 31), notAdjusted[0].EndDate);
+            Assert.Equal(new DateTime(2025, 2, 1), notAdjusted[1].StartDate);
+            Assert.Equal(new DateTime(2025, 2, 28), notAdjusted[1].EndDate);
+            Assert.Equal(new DateTime(2025, 3, 1), notAdjusted[2].StartDate);
+            Assert.Equal(new DateTime(2025, 3, 31), notAdjusted[2].EndDate);
+
+            // Assert: Adjusted (first/last range should match input)
+            Assert.Equal(3, adjusted.Count);
+            Assert.Equal(start.Date, adjusted[0].StartDate);
+            Assert.Equal(new DateTime(2025, 1, 31), adjusted[0].EndDate);
+            Assert.Equal(new DateTime(2025, 2, 1), adjusted[1].StartDate);
+            Assert.Equal(new DateTime(2025, 2, 28), adjusted[1].EndDate);
+            Assert.Equal(new DateTime(2025, 3, 1), adjusted[2].StartDate);
+            Assert.Equal(end.Date, adjusted[2].EndDate);
+        }
+
+        [Fact]
+        public void GetWeeklyRanges_ReturnsExpectedRanges()
+        {
+            // Arrange
+            var start = new DateTime(2025, 3, 4); // Tuesday
+            var end = new DateTime(2025, 3, 25);  // Tuesday
+
+            // Act
+            var notAdjusted = DateHelper.GetWeeklyRanges(start, end, false);
+            var adjusted = DateHelper.GetWeeklyRanges(start, end, true);
+
+            // Assert: Not adjusted (weeks start Sunday, end Saturday)
+            Assert.Equal(4, notAdjusted.Count);
+            Assert.Equal(new DateTime(2025, 3, 2), notAdjusted[0].StartDate);
+            Assert.Equal(new DateTime(2025, 3, 8), notAdjusted[0].EndDate);
+            Assert.Equal(new DateTime(2025, 3, 9), notAdjusted[1].StartDate);
+            Assert.Equal(new DateTime(2025, 3, 15), notAdjusted[1].EndDate);
+            Assert.Equal(new DateTime(2025, 3, 16), notAdjusted[2].StartDate);
+            Assert.Equal(new DateTime(2025, 3, 22), notAdjusted[2].EndDate);
+            Assert.Equal(new DateTime(2025, 3, 23), notAdjusted[3].StartDate);
+            Assert.Equal(new DateTime(2025, 3, 29), notAdjusted[3].EndDate);
+
+            // Assert: Adjusted (first/last range should match input)
+            Assert.Equal(4, adjusted.Count);
+            Assert.Equal(start.Date, adjusted[0].StartDate);
+            Assert.Equal(new DateTime(2025, 3, 8), adjusted[0].EndDate);
+            Assert.Equal(new DateTime(2025, 3, 9), adjusted[1].StartDate);
+            Assert.Equal(new DateTime(2025, 3, 15), adjusted[1].EndDate);
+            Assert.Equal(new DateTime(2025, 3, 16), adjusted[2].StartDate);
+            Assert.Equal(new DateTime(2025, 3, 22), adjusted[2].EndDate);
+            Assert.Equal(new DateTime(2025, 3, 23), adjusted[3].StartDate);
+            Assert.Equal(end.Date, adjusted[3].EndDate);
+        }
+
+        [Fact]
+        public void GetQuarterlyRanges_ReturnsExpectedRanges()
+        {
+            // Arrange
+            var start = new DateTime(2025, 2, 15);
+            var end = new DateTime(2025, 8, 10);
+
+            // Act
+            var notAdjusted = DateHelper.GetQuarterlyRanges(start, end, false);
+            var adjusted = DateHelper.GetQuarterlyRanges(start, end, true);
+
+            // Assert: Not adjusted (quarters: Jan-Mar, Apr-Jun, Jul-Sep)
+            Assert.Equal(3, notAdjusted.Count);
+            Assert.Equal(new DateTime(2025, 1, 1), notAdjusted[0].StartDate);
+            Assert.Equal(new DateTime(2025, 3, 31), notAdjusted[0].EndDate);
+            Assert.Equal(new DateTime(2025, 4, 1), notAdjusted[1].StartDate);
+            Assert.Equal(new DateTime(2025, 6, 30), notAdjusted[1].EndDate);
+            Assert.Equal(new DateTime(2025, 7, 1), notAdjusted[2].StartDate);
+            Assert.Equal(new DateTime(2025, 9, 30), notAdjusted[2].EndDate);
+
+            // Assert: Adjusted (first/last range should match input)
+            Assert.Equal(3, adjusted.Count);
+            Assert.Equal(start.Date, adjusted[0].StartDate);
+            Assert.Equal(new DateTime(2025, 3, 31), adjusted[0].EndDate);
+            Assert.Equal(new DateTime(2025, 4, 1), adjusted[1].StartDate);
+            Assert.Equal(new DateTime(2025, 6, 30), adjusted[1].EndDate);
+            Assert.Equal(new DateTime(2025, 7, 1), adjusted[2].StartDate);
+            Assert.Equal(end.Date, adjusted[2].EndDate);
+        }
+
+        [Fact]
+        public void GetYearlyRanges_ReturnsExpectedRanges()
+        {
+            // Arrange
+            var start = new DateTime(2023, 5, 10);
+            var end = new DateTime(2025, 8, 20);
+
+            // Act
+            var notAdjusted = DateHelper.GetYearlyRanges(start, end, false);
+            var adjusted = DateHelper.GetYearlyRanges(start, end, true);
+
+            // Assert: Not adjusted (years: 2023, 2024, 2025)
+            Assert.Equal(3, notAdjusted.Count);
+            Assert.Equal(new DateTime(2023, 1, 1), notAdjusted[0].StartDate);
+            Assert.Equal(new DateTime(2023, 12, 31), notAdjusted[0].EndDate);
+            Assert.Equal(new DateTime(2024, 1, 1), notAdjusted[1].StartDate);
+            Assert.Equal(new DateTime(2024, 12, 31), notAdjusted[1].EndDate);
+            Assert.Equal(new DateTime(2025, 1, 1), notAdjusted[2].StartDate);
+            Assert.Equal(new DateTime(2025, 12, 31), notAdjusted[2].EndDate);
+
+            // Assert: Adjusted (first/last range should match input)
+            Assert.Equal(3, adjusted.Count);
+            Assert.Equal(start.Date, adjusted[0].StartDate);
+            Assert.Equal(new DateTime(2023, 12, 31), adjusted[0].EndDate);
+            Assert.Equal(new DateTime(2024, 1, 1), adjusted[1].StartDate);
+            Assert.Equal(new DateTime(2024, 12, 31), adjusted[1].EndDate);
+            Assert.Equal(new DateTime(2025, 1, 1), adjusted[2].StartDate);
+            Assert.Equal(end.Date, adjusted[2].EndDate);
+        }
 
         #endregion
 
