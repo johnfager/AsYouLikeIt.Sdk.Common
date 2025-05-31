@@ -4,12 +4,27 @@ using System.Diagnostics;
 namespace AsYouLikeIt.Sdk.Common.Models
 {
 
-    [DebuggerDisplay("{StartDate} - {EndDate}")]
+    [DebuggerDisplay("DateRange '{StartDate}' - '{EndDate}'")]
     public class DateRange : IDateRange, IEquatable<DateRange>
     {
         public DateTime? StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }
+
+        public DateRange()
+        {
+        }
+
+        public DateRange(DateTime? startDate, DateTime? endDate)
+        {
+            if(startDate.HasValue && endDate.HasValue && startDate > endDate)
+            {
+                throw new ArgumentException("Start date cannot be after end date.", nameof(startDate));
+            }
+
+            StartDate = startDate;
+            EndDate = endDate;
+        }
 
         public override bool Equals(object obj) => Equals(obj as DateRange);
 
