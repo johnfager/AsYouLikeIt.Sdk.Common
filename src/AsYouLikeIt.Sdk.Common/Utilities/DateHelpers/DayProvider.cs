@@ -3,6 +3,11 @@ using System.Collections.Generic;
 
 namespace AsYouLikeIt.Sdk.Common.Utilities.DateHelpers
 {
+    public static class Day 
+    {
+        public static DayProvider Provider { get; } = new DayProvider();
+    }
+
     public class DayProvider : DatePeriodProviderBase
     {
         public override DateTime GetStartOfCurrent(DateTime date) => date.Date;

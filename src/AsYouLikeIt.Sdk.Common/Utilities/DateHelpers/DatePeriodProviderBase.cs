@@ -5,23 +5,75 @@ using System.Linq;
 
 namespace AsYouLikeIt.Sdk.Common.Utilities.DateHelpers
 {
+
     /// <summary>
     /// Base provider to keep all term providers consistent for functionality and testing. 
     /// Shares common logic and avoids code duplication.
     /// </summary>
-    public abstract class DateHelperProviderBase
+    public abstract class DatePeriodProviderBase : IDatePeriodProvider
     {
+        #region needed implementations per provider
+
         public abstract DateTime GetStartOfCurrent(DateTime date);
 
-        public abstract DateTime GetStartOfNext(DateTime date);
+        public abstract DateTime Increment(DateTime date, int units);
 
-        public abstract DateTime GetEndOfCurrent(DateTime date);
+        /// <summary>
+        /// Keeps providers from messing up basing on the start of the current term.
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        protected abstract DateTime SetToEndTerm(DateTime date);
 
-        public abstract DateTime GetEndOfPrevious(DateTime date);
+        #endregion
 
-        public abstract HashSet<DateTime> GetStartingDates(DateTime startDate, DateTime endDate);
+        #region shared functionality based on the implementations
 
-        public abstract HashSet<DateTime> GetEndingDates(DateTime startDate, DateTime endDate, bool completedTermsOnly);
+        public DateTime GetEndOfCurrent(DateTime date)
+        {
+            // force everything flowing from start of current
+            var startOfCurrent = GetStartOfCurrent(date);
+            return SetToEndTerm(startOfCurrent);
+        }
+
+        public DateTime GetStartOfNext(DateTime date) => Increment(GetStartOfCurrent(date), 1);
+
+        public DateTime GetEndOfPrevious(DateTime date) => Increment(GetEndOfCurrent(date), -1);
+
+        public HashSet<DateTime> GetStartingDates(DateTime startDate, DateTime endDate)
+        {
+            var dates = new HashSet<DateTime>();
+
+            // Set the point to work with at the beggining since all weeks are 7 day increments and logic is only needed once to set our place
+            var nextDate = GetStartOfCurrent(startDate);
+            while (nextDate <= endDate)
+            {
+                dates.Add(nextDate);
+                nextDate = GetStartOfNext(nextDate);
+            }
+            return dates;
+        }
+
+        public HashSet<DateTime> GetEndingDates(DateTime startDate, DateTime endDate, bool completedTermsOnly)
+        {
+            var nextDate = GetEndOfCurrent(startDate);
+
+            // if completedTermsOnly is true, we need to find the last completed week. otherwise, we can use the endDate directly.
+            var lastDate = completedTermsOnly ?
+                GetEndOfPrevious(endDate) :
+                GetEndOfCurrent(endDate);
+
+            var dates = new HashSet<DateTime>();
+
+            while (nextDate <= lastDate)
+            {
+                dates.Add(nextDate);
+
+                // move to the next 
+                nextDate = GetEndOfCurrent(GetStartOfNext(nextDate));
+            }
+            return dates;
+        }
 
         public List<IDateRange> GetTermRanges(DateTime startDate, DateTime endDate, bool completedTermsOnly, bool includeCompleteInitialTermsOnly)
         {
@@ -37,6 +89,8 @@ namespace AsYouLikeIt.Sdk.Common.Utilities.DateHelpers
             var validatedRanges = GetValidatedDateRanges(startOfWeekDates, endOfWeekDates, completedTermsOnly);
             return validatedRanges;
         }
+
+        #endregion
 
         #region helpers
 

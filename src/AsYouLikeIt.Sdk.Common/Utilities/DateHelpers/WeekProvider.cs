@@ -1,115 +1,65 @@
-﻿using AsYouLikeIt.Sdk.Common.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace AsYouLikeIt.Sdk.Common.Utilities.DateHelpers
 {
 
-    public static class WeekHelper
+    public static class Week
     {
-        private static WeekProvider _weekProvider = new WeekProvider();
-
-        public static WeekProvider Provider => _weekProvider;
+        public static WeekProvider Provider { get; } = new WeekProvider();
     }
 
-    public class WeekProvider
+    public class WeekProvider : DatePeriodProviderBase
     {
-        public DateTime GetStartOfWeek(DateTime date)
+
+        private DayOfWeek _startOfWeek = DayOfWeek.Sunday;
+
+        public override DateTime GetStartOfCurrent(DateTime date) => date.Date.AddDays(-(int)date.DayOfWeek);
+
+        public override DateTime GetStartOfNext(DateTime date) => GetStartOfCurrent(date).AddDays(7);
+
+        public override DateTime GetEndOfCurrent(DateTime date) => GetStartOfCurrent(date).AddDays(6);
+
+        public override DateTime GetEndOfPrevious(DateTime date) => GetEndOfCurrent(date).AddDays(-7);
+
+        public override HashSet<DateTime> GetStartingDates(DateTime startDate, DateTime endDate)
         {
-            // Get the first day of the week (Sunday) for the given date
-            return date.Date.AddDays(-(int)date.DayOfWeek);
-        }
-
-        public HashSet<DateTime> GetStartOfWeekDates(DateTime startDate, DateTime endDate)
-        {
-            var beginningDate = startDate.Date;
-            var lastDate = endDate.Date;
-
-            // -----------------------------------------------------------------------------
-            //  use only the beginningDate and lastDate to create a set of dates from here
-            // -----------------------------------------------------------------------------
-
             var dates = new HashSet<DateTime>();
 
             // Set the point to work with at the beggining since all weeks are 7 day increments and logic is only needed once to set our place
-            var nextDate = GetStartOfWeek(beginningDate);
-            while (nextDate <= lastDate)
+            var nextDate = GetStartOfCurrent(startDate);
+            while (nextDate <= endDate)
             {
-                // extra check to ensure no typos sneak into the logic
-                if (nextDate.DayOfWeek != DayOfWeek.Sunday)
-                {
-                    throw new InvalidOperationException($"The date '{nextDate.DayOfWeek}, {nextDate}' is not valid.");
-                }
                 dates.Add(nextDate);
-
-                // move to the next week
-                nextDate = nextDate.AddDays(7);
+                nextDate = GetStartOfNext(nextDate);
             }
             return dates;
         }
 
-        public DateTime GetEndOfCurrentWeek(DateTime date)
+        public override HashSet<DateTime> GetEndingDates(DateTime startDate, DateTime endDate, bool completedTermsOnly)
         {
-            return date.Date.AddDays(6 - (int)date.DayOfWeek);
-        }
-
-        public DateTime GetEndOfPreviousWeek(DateTime date)
-        {
-            return GetEndOfCurrentWeek(date).AddDays(-7);
-        }
-
-        /// <summary>
-        /// Gets the last day of the week for each week in the range with the option to include only fully completed weeks.
-        /// </summary>
-        /// <param name="startDate"></param>
-        /// <param name="endDate"></param>
-        /// <param name="completedTermsOnly">If a week is not yet completed in the range, it will be omitted.</param>
-        /// <returns></returns>
-        public HashSet<DateTime> GetEndOfWeekDates(DateTime startDate, DateTime endDate, bool completedTermsOnly)
-        {
-            var beginningDate = GetEndOfCurrentWeek(startDate);
+            var nextDate = GetEndOfCurrent(startDate);
 
             // if completedTermsOnly is true, we need to find the last completed week. otherwise, we can use the endDate directly.
             var lastDate = completedTermsOnly ?
-                GetEndOfPreviousWeek(endDate) :
-                GetEndOfCurrentWeek(endDate);
-
-            // -----------------------------------------------------------------------------
-            //  use only the beginningDate and lastDate to create a set of dates from here
-            // -----------------------------------------------------------------------------
-
+                GetEndOfPrevious(endDate) :
+                GetEndOfCurrent(endDate);
+  
             var dates = new HashSet<DateTime>();
-            var nextDate = beginningDate;
 
             while (nextDate <= lastDate)
             {
                 // extra check to ensure no typos sneak into the logic
-                if (nextDate.DayOfWeek != DayOfWeek.Saturday)
+                if (nextDate.DayOfWeek != _startOfWeek - 1)
                 {
                     throw new InvalidOperationException($"The date '{nextDate.DayOfWeek}, {nextDate}' is not valid.");
                 }
                 dates.Add(nextDate);
 
-                // move to the next week
-                nextDate = nextDate.AddDays(7);
+                // move to the next 
+                nextDate = GetEndOfCurrent(GetStartOfNext(nextDate));
             }
             return dates;
-        }
-
-        public List<IDateRange> GetWeeklyRanges(DateTime startDate, DateTime endDate, bool completedTermsOnly, bool includeOnlyCompleteInitialTerms)
-        {
-            var ranges = new List<IDateRange>();
-            if (startDate > endDate)
-            {
-                throw new ArgumentException("Start date cannot be after end date.", nameof(startDate));
-            }
-
-            var startOfWeekDates = GetStartOfWeekDates(startDate, endDate).ToArray();
-            var endOfWeekDates = GetEndOfWeekDates(startDate, endDate, completedTermsOnly).ToArray();
-
-            var validatedRanges = DateHelper.GetValidatedDateRanges(startOfWeekDates, endOfWeekDates, completedTermsOnly);
-            return validatedRanges;
         }
     }
 }
